@@ -27,23 +27,35 @@ public class UpdateHelper {
     //双重嵌套一级是否强制更新
     private boolean updateForce = false;
 
+    private boolean download_Cancle = false;
+
     //联网请求方式
     private HttpMetHod httpMetHod = HttpMetHod.GET;
 
-    //二级（1.手动更新2.自动更新（有网更新，只有WiFi更新，只有WiFi下载））
+    //默认需要检测更新
+    private CheckType checkType = CheckType.check_no_Dialog;
+    private DownType downType = DownType.down_auto_Install;
+    private UpdateTipType updateWithOut = UpdateTipType.tip_without;
+
+
+    //检测更新类型
     public enum CheckType {
         check_with_Dialog,
         check_no_Dialog
     }
 
+    //无更新类型
+    public enum UpdateTipType {
+        tip_without,
+        tip_toast,
+        tip_dialog
+    }
+
+    //下载更新类型
     public enum DownType {
         down_auto_Install,
         down_click_Install
     }
-
-    //默认需要检测更新
-    private CheckType checkType = CheckType.check_no_Dialog;
-    private DownType downType = DownType.down_auto_Install;
 
     public static UpdateHelper getInstance() {
         if (instance == null) {
@@ -82,6 +94,11 @@ public class UpdateHelper {
 
     public UpdateHelper setCheckType(CheckType checkType) {
         this.checkType = checkType;
+        return this;
+    }
+
+    public UpdateHelper setUpdateTipType(UpdateTipType updateWithOut) {
+        this.updateWithOut = updateWithOut;
         return this;
     }
 
@@ -134,10 +151,23 @@ public class UpdateHelper {
     }
 
 
+    public UpdateTipType getUpdateTipType() {
+        return updateWithOut;
+    }
+
+
+
     public boolean isShowProgressDialog() {
         return showProgressDialog;
     }
 
+    public boolean isDownload_Cancle() {
+        return download_Cancle;
+    }
+
+    public void setDownload_Cancle(boolean download_Cancle) {
+        this.download_Cancle = download_Cancle;
+    }
 
     public void check(Activity activity) {
         UpdateAgent.getInstance().checkUpdate(activity);

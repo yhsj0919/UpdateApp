@@ -23,11 +23,12 @@ import java.net.URL;
 import java.text.DecimalFormat;
 
 import xyz.yhsj.update.R;
+import xyz.yhsj.update.UpdateHelper;
 import xyz.yhsj.update.utils.FileUtil;
 
 /***
  * 升级服务
- *
+ * <p>
  * Created by LOVE on 2016/8/31 031.
  */
 public class DownloadService extends Service {
@@ -166,7 +167,7 @@ public class DownloadService extends Service {
 
                     builder.setAutoCancel(true);
 
-                    Toast.makeText(DownloadService.this, "下载失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DownloadService.this, "下载停止", Toast.LENGTH_SHORT).show();
 
                     mNotificationManager1.cancel(NotificationID);
 
@@ -296,6 +297,16 @@ public class DownloadService extends Service {
 
 
 //            System.out.println(">>>>>>>>>>>>>>>>>>>>" + ((downloadCount * 100.0) / totalSize));
+
+            if (UpdateHelper.getInstance().isDownload_Cancle()) {
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                    inputStream.close();
+                    outputStream.close();
+                    UpdateHelper.getInstance().setDownload_Cancle(false);
+                }
+            }
+
 
             /*** 每次增张3%**/
             if (updateCount == 0 || (downloadCount * 100.0 / totalSize) >= updateCount) {

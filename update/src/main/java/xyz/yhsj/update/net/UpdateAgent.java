@@ -49,7 +49,7 @@ public class UpdateAgent {
             if (checkDialog == null) {
                 checkDialog = new ProgressDialog(activity);
                 checkDialog.setMessage("正在检查更新...");
-                checkDialog.setCancelable(false);
+//                checkDialog.setCancelable(false);
             }
             checkDialog.show();
         }
@@ -68,7 +68,16 @@ public class UpdateAgent {
 
                         UpdateEntity updateEntity = UpdateHelper.getInstance().getJsonParser().parse(result);
                         if (updateEntity == null || TextUtils.isEmpty(updateEntity.getUpdateUrl())) {
-                            Toast.makeText(activity, "未发现新版本1", Toast.LENGTH_SHORT).show();
+
+                            if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_dialog) {
+                                showNoUpdateDialog(activity);
+                            } else if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_toast) {
+                                Toast.makeText(activity, "已是最新版本", Toast.LENGTH_SHORT).show();
+                            } else if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_without) {
+
+                            }
+
+
                         } else {
                             showAlertDialog(activity, updateEntity);
                         }
@@ -79,13 +88,39 @@ public class UpdateAgent {
                         if (checkDialog != null && checkDialog.isShowing()) {
                             checkDialog.dismiss();
                         }
-                        Toast.makeText(activity, "未发现新版本2", Toast.LENGTH_SHORT).show();
+                        if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_dialog) {
+                            showNoUpdateDialog(activity);
+                        } else if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_toast) {
+                            Toast.makeText(activity, "已是最新版本", Toast.LENGTH_SHORT).show();
+                        } else if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_without) {
+
+                        }
                     }
                 });
     }
 
     /**
-     * 信息提示的dialog
+     * 没有更新的dialog
+     *
+     * @param activity
+     */
+    private void showNoUpdateDialog(final Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("提示");
+        builder.setMessage("已是最新版本");
+        builder.setCancelable(false);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+
+    }
+
+    /**
+     * 有更新的dialog
      *
      * @param activity
      * @param updateEntity
@@ -95,6 +130,7 @@ public class UpdateAgent {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("发现新版本 " + updateEntity.getVersionCode());
         builder.setMessage(updateEntity.getContent());
+        builder.setCancelable(false);
         builder.setPositiveButton("更新", new DialogInterface.OnClickListener() {
 
             @Override
@@ -163,12 +199,23 @@ public class UpdateAgent {
         downDialog.setCancelable(false);
         downDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         downDialog.setButton(
-                ProgressDialog.BUTTON_NEGATIVE,
-                "后台下载",
+                ProgressDialog.BUTTON_POSITIVE,
+                "后台",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                    }
+                });
+
+        downDialog.setButton(
+                ProgressDialog.BUTTON_NEGATIVE,
+                "取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        UpdateHelper.getInstance().setDownload_Cancle(true);
                     }
                 });
 
@@ -237,13 +284,12 @@ public class UpdateAgent {
 
         ActivityManager myAM = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
-        List<ActivityManager.RunningServiceInfo> myList = myAM.getRunningServices(30);
+        List<ActivityManager.RunningServiceInfo> myList = myAM.getRunningServices(40);
 
         for (int i = 0; i < myList.size(); i++) {
             String mName = myList.get(i).service.getClassName();
             if (mName.equals(serviceName)) {
                 return true;
-
             }
         }
         return false;
