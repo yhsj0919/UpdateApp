@@ -23,9 +23,9 @@ import xyz.yhsj.update.service.DownloadService;
 public class UpdateAgent {
     private static UpdateAgent updater;
     //检查更新的弹窗
-    private static ProgressDialog checkDialog;
+    private ProgressDialog checkDialog;
     //下载的进度弹窗
-    private static ProgressDialog downDialog;
+    private ProgressDialog downDialog;
     //下载进度的广播
     private UpdateProgressBroadcastReceiver broadcastReceiver;
 
@@ -46,12 +46,17 @@ public class UpdateAgent {
     public void checkUpdate(final Activity activity) {
 
         if (UpdateHelper.getInstance().getCheckType() == UpdateHelper.CheckType.check_with_Dialog) {
-            if (checkDialog == null) {
-                checkDialog = new ProgressDialog(activity);
-                checkDialog.setMessage("正在检查更新...");
-//                checkDialog.setCancelable(false);
+
+            checkDialog = new ProgressDialog(activity);
+            checkDialog.setMessage("正在检查更新...");
+            checkDialog.setCancelable(false);
+
+            if (!activity.isFinishing()) {
+                checkDialog.show();
+            } else {
+                return;
             }
-            checkDialog.show();
+
         }
 
         new NetUtils(

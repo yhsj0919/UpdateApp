@@ -69,7 +69,7 @@ public class UpdateHelper {
         instance = new UpdateHelper(appContext);
     }
 
-    public UpdateHelper(Context context) {
+    private UpdateHelper(Context context) {
         this.mContext = context;
 
     }
@@ -154,7 +154,6 @@ public class UpdateHelper {
     public UpdateTipType getUpdateTipType() {
         return updateWithOut;
     }
-
 
 
     public boolean isShowProgressDialog() {

@@ -5,6 +5,7 @@ import android.app.Application;
 import xyz.yhsj.update.ParseData;
 import xyz.yhsj.update.UpdateHelper;
 import xyz.yhsj.update.bean.UpdateEntity;
+import xyz.yhsj.update.net.NetUtils;
 
 public class MyApp extends Application {
 
