@@ -8,8 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 import xyz.yhsj.update.UpdateHelper;
+import xyz.yhsj.update.bean.UpdateEntity;
+import xyz.yhsj.update.listener.UpdateListener;
 
 public class MainActivity extends AppCompatActivity {
     private Button btn_check;
@@ -30,6 +33,17 @@ public class MainActivity extends AppCompatActivity {
                 UpdateHelper
                         .getInstance()
                         .setCheckType(UpdateHelper.CheckType.check_with_Dialog)
+                        .setUpdateListener(new UpdateListener() {
+                            @Override
+                            public void Update(UpdateEntity updateEntity) {
+                                Toast.makeText(MainActivity.this,"发现新版本",Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void UnUpdate() {
+                                Toast.makeText(MainActivity.this,"未发现新版本",Toast.LENGTH_SHORT).show();
+                            }
+                        })
                         .check(MainActivity.this);
             }
         });

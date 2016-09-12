@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import java.util.HashMap;
 
+import xyz.yhsj.update.listener.UpdateListener;
 import xyz.yhsj.update.net.HttpMetHod;
 import xyz.yhsj.update.net.UpdateAgent;
 
@@ -14,27 +15,28 @@ import xyz.yhsj.update.net.UpdateAgent;
  * Created by LOVE on 2016/8/31 031.
  */
 public class UpdateHelper {
-
-
-    private Context mContext;
-    private String checkUrl;
-    private HashMap<String, String> params;
-    private ParseData jsonParser;
-    private boolean showProgressDialog;
-
     private static UpdateHelper instance;
-
-    //双重嵌套一级是否强制更新
-    private boolean updateForce = false;
-
+    //上下文
+    private Context mContext;
+    //检测更新的url
+    private String checkUrl;
+    //检测更新的参数
+    private HashMap<String, String> params;
+    //检测结果解析器
+    private ParseData jsonParser;
+    //是否显示下载进度
+    private boolean showProgressDialog;
+    //下载是否取消
     private boolean download_Cancle = false;
-
+    //辅助获取检测结果的回调
+    private UpdateListener updateListener;
     //联网请求方式
     private HttpMetHod httpMetHod = HttpMetHod.GET;
-
-    //默认需要检测更新
+    //检测更新的类型，默认没有进度弹窗
     private CheckType checkType = CheckType.check_no_Dialog;
+    //下载类型，默认自动安装
     private DownType downType = DownType.down_auto_Install;
+    //无更新的提示类型
     private UpdateTipType updateWithOut = UpdateTipType.tip_without;
 
 
@@ -43,6 +45,7 @@ public class UpdateHelper {
         check_with_Dialog,
         check_no_Dialog
     }
+
 
     //无更新类型
     public enum UpdateTipType {
@@ -65,6 +68,7 @@ public class UpdateHelper {
         }
     }
 
+
     public static void init(Context appContext) {
         instance = new UpdateHelper(appContext);
     }
@@ -84,6 +88,11 @@ public class UpdateHelper {
         this.checkUrl = url;
         this.params = params;
         this.httpMetHod = HttpMetHod.POST;
+        return this;
+    }
+
+    public UpdateHelper setUpdateListener(UpdateListener updateListener) {
+        this.updateListener = updateListener;
         return this;
     }
 
@@ -145,11 +154,14 @@ public class UpdateHelper {
 
     public ParseData getJsonParser() {
         if (jsonParser == null) {
-            throw new IllegalStateException("update parser is null");
+            throw new IllegalStateException("should call UpdateHelper.setJsonParser first");
         }
         return jsonParser;
     }
 
+    public UpdateListener getUpdateListener() {
+        return updateListener;
+    }
 
     public UpdateTipType getUpdateTipType() {
         return updateWithOut;

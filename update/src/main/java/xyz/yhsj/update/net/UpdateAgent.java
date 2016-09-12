@@ -73,6 +73,12 @@ public class UpdateAgent {
 
                         UpdateEntity updateEntity = UpdateHelper.getInstance().getJsonParser().parse(result);
                         if (updateEntity == null || TextUtils.isEmpty(updateEntity.getUpdateUrl())) {
+                            //通知前台更新状态
+                            if (UpdateHelper.getInstance().getUpdateListener() != null) {
+                                UpdateHelper.getInstance().getUpdateListener().UnUpdate();
+                                //销毁监听器，防止因为单例模式下监听器未消毁导致的异常
+                                UpdateHelper.getInstance().setUpdateListener(null);
+                            }
 
                             if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_dialog) {
                                 showNoUpdateDialog(activity);
@@ -82,8 +88,13 @@ public class UpdateAgent {
 
                             }
 
-
                         } else {
+                            //通知前台更新状态
+                            if (UpdateHelper.getInstance().getUpdateListener() != null) {
+                                UpdateHelper.getInstance().getUpdateListener().Update(updateEntity);
+                                //销毁监听器，防止因为单例模式下监听器未消毁导致的异常
+                                UpdateHelper.getInstance().setUpdateListener(null);
+                            }
                             showAlertDialog(activity, updateEntity);
                         }
                     }
