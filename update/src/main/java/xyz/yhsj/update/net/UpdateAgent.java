@@ -144,7 +144,7 @@ public class UpdateAgent {
     private void showAlertDialog(final Activity activity, final UpdateEntity updateEntity) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("发现新版本 " + updateEntity.getVersionCode());
+        builder.setTitle("发现新版本 " + updateEntity.getVersionName());
         builder.setMessage(updateEntity.getContent());
         builder.setCancelable(false);
         builder.setPositiveButton("更新", new DialogInterface.OnClickListener() {
@@ -175,7 +175,7 @@ public class UpdateAgent {
         if (!isServiceWork(activity, DownloadService.class.getName())) {
 
             Intent it = new Intent(activity, DownloadService.class);
-            it.putExtra(DownloadService.KEY_APP_NAME, updateEntity.getName());
+            it.putExtra(DownloadService.KEY_APP_NAME, updateEntity.getAppName());
             it.putExtra(DownloadService.KEY_DOWN_URL, updateEntity.getUpdateUrl());
 
             //是否自动安装

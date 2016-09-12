@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import java.util.HashMap;
 
+import xyz.yhsj.update.listener.ParseData;
 import xyz.yhsj.update.listener.UpdateListener;
 import xyz.yhsj.update.net.HttpMetHod;
 import xyz.yhsj.update.net.UpdateAgent;
