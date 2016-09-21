@@ -39,6 +39,8 @@ public class UpdateHelper {
     private DownType downType = DownType.down_auto_Install;
     //无更新的提示类型
     private UpdateTipType updateWithOut = UpdateTipType.tip_without;
+    //仅仅检测更新
+    private boolean onleyCheck;
 
 
     //检测更新类型
@@ -92,7 +94,8 @@ public class UpdateHelper {
         return this;
     }
 
-    public UpdateHelper setUpdateListener(UpdateListener updateListener) {
+    public UpdateHelper setUpdateListener(boolean onleyCheck, UpdateListener updateListener) {
+        this.onleyCheck = onleyCheck;
         this.updateListener = updateListener;
         return this;
     }
@@ -122,6 +125,9 @@ public class UpdateHelper {
         return this;
     }
 
+    public boolean isOnleyCheck() {
+        return onleyCheck;
+    }
 
     public Context getContext() {
         if (mContext == null) {

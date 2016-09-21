@@ -33,15 +33,14 @@ public class MainActivity extends AppCompatActivity {
                 UpdateHelper
                         .getInstance()
                         .setCheckType(UpdateHelper.CheckType.check_with_Dialog)
-                        .setUpdateListener(new UpdateListener() {
+                        .setUpdateListener(false, new UpdateListener() {
                             @Override
-                            public void Update(UpdateEntity updateEntity) {
-                                Toast.makeText(MainActivity.this,"发现新版本",Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void UnUpdate() {
-                                Toast.makeText(MainActivity.this,"未发现新版本",Toast.LENGTH_SHORT).show();
+                            public void Update(boolean update, UpdateEntity updateEntity) {
+                                if (update) {
+                                    Toast.makeText(MainActivity.this, "发现新版本", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "未发现新版本", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         })
                         .check(MainActivity.this);

@@ -73,29 +73,38 @@ public class UpdateAgent {
 
                         UpdateEntity updateEntity = UpdateHelper.getInstance().getJsonParser().parse(result);
                         if (updateEntity == null || TextUtils.isEmpty(updateEntity.getUpdateUrl())) {
+
+
+                            if (!UpdateHelper.getInstance().isOnleyCheck()) {
+                                if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_dialog) {
+                                    showNoUpdateDialog(activity);
+                                } else if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_toast) {
+                                    Toast.makeText(activity, "已是最新版本", Toast.LENGTH_SHORT).show();
+                                } else if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_without) {
+
+                                }
+                            }
+
                             //通知前台更新状态
                             if (UpdateHelper.getInstance().getUpdateListener() != null) {
-                                UpdateHelper.getInstance().getUpdateListener().UnUpdate();
+                                UpdateHelper.getInstance().getUpdateListener().Update(false, null);
                                 //销毁监听器，防止因为单例模式下监听器未消毁导致的异常
-                                UpdateHelper.getInstance().setUpdateListener(null);
+                                UpdateHelper.getInstance().setUpdateListener(false, null);
                             }
 
-                            if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_dialog) {
-                                showNoUpdateDialog(activity);
-                            } else if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_toast) {
-                                Toast.makeText(activity, "已是最新版本", Toast.LENGTH_SHORT).show();
-                            } else if (UpdateHelper.getInstance().getUpdateTipType() == UpdateHelper.UpdateTipType.tip_without) {
-
-                            }
 
                         } else {
+
+                            if (!UpdateHelper.getInstance().isOnleyCheck()) {
+                                showAlertDialog(activity, updateEntity);
+                            }
+
                             //通知前台更新状态
                             if (UpdateHelper.getInstance().getUpdateListener() != null) {
-                                UpdateHelper.getInstance().getUpdateListener().Update(updateEntity);
+                                UpdateHelper.getInstance().getUpdateListener().Update(true, updateEntity);
                                 //销毁监听器，防止因为单例模式下监听器未消毁导致的异常
-                                UpdateHelper.getInstance().setUpdateListener(null);
+                                UpdateHelper.getInstance().setUpdateListener(false, null);
                             }
-                            showAlertDialog(activity, updateEntity);
                         }
                     }
 
